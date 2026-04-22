@@ -13,8 +13,7 @@ const STYLES = `
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --navy: #0d1b2a; --navy-mid: #162538; --navy-light: #1e3250;
-    --cream: #f5f0e8; --cream-dim: #ede7d9;
-    --amber: #e8a230; --amber-dim: #c4871f;
+    --cream: #f5f0e8; --amber: #e8a230; --amber-dim: #c4871f;
     --red: #d64045; --green: #4a9e6b;
     --text-primary: #f5f0e8; --text-dim: #8fa3b8;
     --border: rgba(245,240,232,0.08);
@@ -25,8 +24,10 @@ const STYLES = `
   .header { display: flex; align-items: center; justify-content: space-between; padding: 20px 48px; border-bottom: 1px solid var(--border); }
   .logo { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--cream); cursor: pointer; }
   .logo span { color: var(--amber); }
-  .badge { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); border: 1px solid var(--amber); border-radius: 2px; padding: 3px 8px; }
+  .badge { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); border: 1px solid var(--amber); border-radius: 2px; padding: 3px 8px; }
   .header-right { display: flex; gap: 10px; align-items: center; }
+  .nav-link { background: none; border: none; color: var(--text-dim); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 8px 12px; transition: color 0.2s; }
+  .nav-link:hover, .nav-link.active { color: var(--cream); }
   .user-email { font-size: 12px; color: var(--text-dim); font-family: 'DM Mono', monospace; }
   .tier-badge { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; }
   .tier-badge.free { color: var(--text-dim); border: 1px solid var(--border); }
@@ -165,13 +166,77 @@ const STYLES = `
   .btn-upgrade:disabled { opacity: 0.6; cursor: not-allowed; }
   .price-tag { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-dim); text-align: center; margin-top: 8px; }
   .error-box { background: rgba(214,64,69,0.08); border: 1px solid rgba(214,64,69,0.3); border-radius: 6px; padding: 16px 20px; margin-top: 16px; font-size: 14px; color: #f0a0a2; }
+
+  /* ── PRICING PAGE ───────────────────────────────── */
+  .pricing-page { max-width: 1000px; margin: 0 auto; padding: 72px 48px 80px; animation: fadeUp 0.35s ease both; }
+  .pricing-eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--amber); margin-bottom: 16px; text-align: center; }
+  .pricing-title { font-family: 'Playfair Display', serif; font-size: clamp(30px, 4vw, 46px); font-weight: 900; line-height: 1.1; color: var(--cream); margin-bottom: 16px; text-align: center; }
+  .pricing-sub { font-size: 16px; color: var(--text-dim); text-align: center; max-width: 440px; margin: 0 auto 20px; line-height: 1.7; }
+  .billing-toggle { display: flex; align-items: center; gap: 12px; justify-content: center; margin-bottom: 52px; }
+  .billing-label { font-size: 13px; color: var(--text-dim); cursor: pointer; transition: color 0.2s; }
+  .billing-label.active { color: var(--cream); }
+  .toggle-wrap { width: 44px; height: 24px; background: var(--navy-light); border-radius: 12px; cursor: pointer; position: relative; transition: background 0.2s; border: 1px solid var(--border); }
+  .toggle-wrap.on { background: var(--amber); border-color: var(--amber); }
+  .toggle-knob { width: 18px; height: 18px; background: var(--cream); border-radius: 50%; position: absolute; top: 2px; left: 3px; transition: transform 0.2s; }
+  .toggle-wrap.on .toggle-knob { transform: translateX(20px); }
+  .save-pill { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; background: rgba(74,158,107,0.15); color: var(--green); border: 1px solid rgba(74,158,107,0.3); border-radius: 20px; padding: 3px 10px; }
+  .pricing-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 60px; }
+  .p-card { background: var(--navy-mid); border: 1px solid var(--border); border-radius: 12px; padding: 32px 26px; position: relative; transition: transform 0.2s; display: flex; flex-direction: column; }
+  .p-card:hover { transform: translateY(-4px); }
+  .p-card.featured { border-color: var(--amber); background: linear-gradient(160deg, rgba(232,162,48,0.07) 0%, var(--navy-mid) 50%); }
+  .p-card-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; background: var(--amber); color: var(--navy); padding: 4px 14px; border-radius: 20px; white-space: nowrap; font-weight: 600; }
+  .p-tier { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 16px; }
+  .p-card.featured .p-tier { color: var(--amber); }
+  .p-amount-row { display: flex; align-items: flex-end; gap: 2px; margin-bottom: 4px; }
+  .p-currency { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--cream); margin-bottom: 6px; }
+  .p-amount { font-family: 'Playfair Display', serif; font-size: 44px; font-weight: 900; color: var(--cream); line-height: 1; }
+  .p-period { font-size: 13px; color: var(--text-dim); margin-bottom: 4px; }
+  .p-annual { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--green); margin-bottom: 20px; min-height: 16px; }
+  .p-desc { font-size: 14px; color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .p-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; flex: 1; }
+  .p-feat { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.5; }
+  .p-feat.has { color: var(--cream); }
+  .p-feat.no { color: var(--text-dim); }
+  .p-check { color: var(--green); flex-shrink: 0; }
+  .p-cross { color: var(--text-dim); flex-shrink: 0; }
+  .p-btn { width: 100%; border-radius: 6px; padding: 13px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; margin-top: auto; }
+  .p-btn.ghost { background: none; border: 1px solid var(--border); color: var(--text-dim); }
+  .p-btn.ghost:hover { border-color: var(--cream); color: var(--cream); }
+  .p-btn.primary { background: var(--amber); color: var(--navy); }
+  .p-btn.primary:hover:not(:disabled) { background: var(--amber-dim); transform: translateY(-1px); }
+  .p-btn.primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .p-btn.outline { background: none; border: 1px solid var(--amber); color: var(--amber); }
+  .p-btn.outline:hover { background: rgba(232,162,48,0.08); }
+  .p-current { width: 100%; border-radius: 6px; padding: 13px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; text-align: center; color: var(--green); border: 1px solid rgba(74,158,107,0.3); background: rgba(74,158,107,0.08); }
+  .social-strip { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; margin-bottom: 60px; padding: 28px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .s-stat { text-align: center; }
+  .s-num { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 900; color: var(--amber); }
+  .s-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin-top: 4px; }
+  .faq-wrap { max-width: 620px; margin: 0 auto 60px; }
+  .faq-heading { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--cream); text-align: center; margin-bottom: 32px; }
+  .faq-row { border-bottom: 1px solid var(--border); padding: 18px 0; cursor: pointer; }
+  .faq-row:first-of-type { border-top: 1px solid var(--border); }
+  .faq-q-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .faq-q-text { font-size: 15px; color: var(--cream); font-weight: 500; line-height: 1.5; }
+  .faq-arrow { color: var(--text-dim); font-size: 18px; flex-shrink: 0; transition: transform 0.2s; }
+  .faq-arrow.open { transform: rotate(180deg); }
+  .faq-a { font-size: 14px; color: var(--text-dim); line-height: 1.75; margin-top: 12px; }
+  .pricing-cta { text-align: center; padding-bottom: 20px; }
+  .pricing-cta-title { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--cream); margin-bottom: 10px; }
+  .pricing-cta-title em { color: var(--amber); font-style: italic; }
+  .pricing-cta-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; }
+
+  /* FOOTER */
   .footer { border-top: 1px solid var(--border); padding: 24px 48px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: auto; }
   .footer-logo { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--text-dim); }
   .footer-logo span { color: var(--amber); }
   .footer-links { display: flex; gap: 20px; }
   .footer-link { font-size: 12px; color: var(--text-dim); cursor: pointer; transition: color 0.2s; }
   .footer-link:hover { color: var(--cream); }
-  @media (max-width: 640px) {
+
+  @media (max-width: 768px) {
+    .pricing-grid { grid-template-columns: 1fr; max-width: 380px; margin-left: auto; margin-right: auto; }
+    .pricing-page { padding: 48px 20px 60px; }
     .header { padding: 16px 20px; }
     .hero { padding: 48px 20px 36px; }
     .upload-container { padding: 0 20px 48px; }
@@ -179,6 +244,7 @@ const STYLES = `
     .footer { padding: 20px; }
     .paywall { flex-direction: column; }
     .badge { display: none; }
+    .social-strip { gap: 20px; }
   }
 `;
 
@@ -186,8 +252,6 @@ const SAMPLE_TEXT = `EMPLOYMENT CONTRACT - EXCERPT
 
 13. POST-TERMINATION RESTRICTIONS
 13.1 The Employee agrees that for a period of 24 months following the termination of employment, they shall not directly or indirectly engage in any business activity which competes with the Company's business within a 50-mile radius of any office in which the Employee has worked.
-
-13.2 The Employee shall not solicit or attempt to solicit any client, customer, or prospect of the Company with whom the Employee had material contact during the 12 months prior to termination.
 
 14. INTELLECTUAL PROPERTY
 14.1 All work product, inventions, or developments created by the Employee during or outside of working hours shall be the exclusive property of the Company.
@@ -198,7 +262,18 @@ const SAMPLE_TEXT = `EMPLOYMENT CONTRACT - EXCERPT
 16. VARIATION
 16.1 The Company reserves the right to vary the terms of this contract with 7 days notice.`;
 
+const FAQS = [
+  { q: "Is this actual legal advice?", a: "No — ClearClause is an AI analysis tool, not a law firm. We help you understand what a document says in plain English and flag potential concerns. For anything high-stakes (buying a house, employment disputes, business contracts), you should consult a qualified solicitor." },
+  { q: "What types of documents can I analyse?", a: "Any text-based legal or contractual document: employment contracts, tenancy agreements, freelance contracts, terms of service, privacy policies, NDAs, service agreements, mortgage offer letters, and more." },
+  { q: "Are my documents stored or shared?", a: "No. Documents are sent securely for analysis and immediately discarded. We never store, train on, or share your document contents." },
+  { q: "What's included in the free plan?", a: "3 document analyses per month, plain English summaries, key clause explanations, red flags, and action steps. Resets monthly — no credit card required." },
+  { q: "Can I cancel my Pro subscription anytime?", a: "Yes, absolutely. Cancel anytime from your account settings. You keep Pro access until the end of your billing period." },
+  { q: "Do you offer refunds?", a: "If you're not satisfied within 7 days of upgrading, contact us and we'll refund you in full — no questions asked." },
+  { q: "Is there a Business or team plan?", a: "Coming soon. If you need multi-seat access, API integration, or white-label for your platform, email us at hello@clearclause.co.uk." },
+];
+
 export default function ClearClause() {
+  const [page, setPage] = useState("home");
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
   const [authModal, setAuthModal] = useState(null);
@@ -214,6 +289,8 @@ export default function ClearClause() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [annual, setAnnual] = useState(false);
+  const [openFaq, setOpenFaq] = useState(null);
   const fileRef = useRef();
 
   useEffect(() => {
@@ -231,19 +308,14 @@ export default function ClearClause() {
 
   async function fetchProfile(token) {
     try {
-      const res = await fetch(`${API_BASE}/api/profile`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await fetch(`${API_BASE}/api/profile`, { headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) setProfile(await res.json());
-    } catch (e) { console.error("Profile fetch failed:", e); }
+    } catch (e) { console.error(e); }
   }
 
   async function handleSignUp() {
     setAuthLoading(true); setAuthError(""); setAuthSuccess("");
-    const { error } = await supabase.auth.signUp({
-      email: authForm.email, password: authForm.password,
-      options: { emailRedirectTo: window.location.origin }
-    });
+    const { error } = await supabase.auth.signUp({ email: authForm.email, password: authForm.password, options: { emailRedirectTo: window.location.origin } });
     setAuthLoading(false);
     if (error) setAuthError(error.message);
     else setAuthSuccess("Check your email to confirm your account.");
@@ -251,9 +323,7 @@ export default function ClearClause() {
 
   async function handleSignIn() {
     setAuthLoading(true); setAuthError("");
-    const { error } = await supabase.auth.signInWithPassword({
-      email: authForm.email, password: authForm.password
-    });
+    const { error } = await supabase.auth.signInWithPassword({ email: authForm.email, password: authForm.password });
     setAuthLoading(false);
     if (error) setAuthError(error.message);
     else setAuthModal(null);
@@ -261,7 +331,7 @@ export default function ClearClause() {
 
   async function handleSignOut() {
     await supabase.auth.signOut();
-    setResult(null); setFile(null); setText("");
+    setResult(null); setFile(null); setText(""); setPage("home");
   }
 
   async function handleUpgrade() {
@@ -270,11 +340,11 @@ export default function ClearClause() {
     try {
       const res = await fetch(`${API_BASE}/api/stripe/checkout`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ annual })
       });
       const data = await res.json();
       if (data.url) window.location.href = data.url;
-      else setError("Failed to start checkout. Please try again.");
     } catch (e) { setError("Failed to start checkout."); }
     finally { setCheckoutLoading(false); }
   }
@@ -301,12 +371,8 @@ export default function ClearClause() {
     setLoading(true); setResult(null); setError("");
     try {
       let body;
-      if (tab === "upload" && file) {
-        const pdf_base64 = await readFileAsBase64(file);
-        body = { pdf_base64 };
-      } else {
-        body = { text: tab === "paste" ? text : SAMPLE_TEXT };
-      }
+      if (tab === "upload" && file) { const pdf_base64 = await readFileAsBase64(file); body = { pdf_base64 }; }
+      else { body = { text: tab === "paste" ? text : SAMPLE_TEXT }; }
       const res = await fetch(`${API_BASE}/api/analyse`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
@@ -318,9 +384,11 @@ export default function ClearClause() {
       setResult(data.result);
       fetchProfile(session.access_token);
     } catch (err) {
-      if (err.message !== "free_limit") setError(err.message || "Something went wrong. Please try again.");
+      if (err.message !== "free_limit") setError(err.message || "Something went wrong.");
     } finally { setLoading(false); }
   }
+
+  function goHome() { setPage("home"); setResult(null); setError(""); }
 
   const canAnalyse = (tab === "upload" && file) || (tab === "paste" && text.trim().length > 80) || tab === "sample";
   const riskLevel = result?.risk_level?.toLowerCase() || "medium";
@@ -328,6 +396,9 @@ export default function ClearClause() {
   const usageLimit = profile?.usage?.limit || 3;
   const isPro = profile?.profile?.tier === "pro";
   const usagePct = isPro ? 0 : Math.min((usageUsed / usageLimit) * 100, 100);
+  const monthlyPrice = 9.99;
+  const annualMonthly = 7.99;
+  const displayPrice = annual ? annualMonthly : monthlyPrice;
 
   return (
     <>
@@ -335,6 +406,7 @@ export default function ClearClause() {
       <div className="grain" />
       <div className="app">
 
+        {/* AUTH MODAL */}
         {authModal && (
           <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setAuthModal(null)}>
             <div className="modal">
@@ -367,17 +439,19 @@ export default function ClearClause() {
           </div>
         )}
 
+        {/* HEADER */}
         <header className="header">
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div className="logo" onClick={() => { setResult(null); setError(""); }}>Clear<span>Clause</span></div>
+            <div className="logo" onClick={goHome}>Clear<span>Clause</span></div>
             <div className="badge">Beta</div>
           </div>
           <div className="header-right">
+            <button className={`nav-link ${page === "pricing" ? "active" : ""}`} onClick={() => setPage("pricing")}>Pricing</button>
             {session ? (
               <>
                 <span className="user-email">{session.user.email}</span>
                 <span className={`tier-badge ${isPro ? "pro" : "free"}`}>{isPro ? "Pro" : "Free"}</span>
-                {!isPro && <button className="btn-amber" onClick={handleUpgrade} disabled={checkoutLoading}>Upgrade</button>}
+                {!isPro && <button className="btn-amber" onClick={() => setPage("pricing")}>Upgrade</button>}
                 <button className="btn-ghost" onClick={handleSignOut}>Sign out</button>
               </>
             ) : (
@@ -389,7 +463,115 @@ export default function ClearClause() {
           </div>
         </header>
 
-        {!result && !loading && (
+        {/* ── PRICING PAGE ─────────────────────────────────── */}
+        {page === "pricing" && (
+          <div className="pricing-page">
+            <p className="pricing-eyebrow">Simple, transparent pricing</p>
+            <h1 className="pricing-title">Understand every document.<br />Pay less than a solicitor's coffee.</h1>
+            <p className="pricing-sub">Start free. Upgrade when you need more. Cancel anytime.</p>
+
+            <div className="billing-toggle">
+              <span className={`billing-label ${!annual ? "active" : ""}`} onClick={() => setAnnual(false)}>Monthly</span>
+              <div className={`toggle-wrap ${annual ? "on" : ""}`} onClick={() => setAnnual(v => !v)}>
+                <div className="toggle-knob" />
+              </div>
+              <span className={`billing-label ${annual ? "active" : ""}`} onClick={() => setAnnual(true)}>Annual</span>
+              <span className="save-pill">Save 20%</span>
+            </div>
+
+            <div className="pricing-grid">
+              {/* FREE */}
+              <div className="p-card">
+                <div className="p-tier">Free</div>
+                <div className="p-amount-row"><span className="p-currency">£</span><span className="p-amount">0</span></div>
+                <div className="p-period">forever</div>
+                <div className="p-annual"> </div>
+                <div className="p-desc">Perfect for occasional use. No credit card required.</div>
+                <div className="p-features">
+                  {[[true,"3 analyses per month"],[true,"Plain English summaries"],[true,"Key clause explanations"],[true,"Red flags highlighted"],[true,"Action steps"],[false,"Unlimited analyses"],[false,"Negotiation tips"],[false,"PDF export"]].map(([has, label], i) => (
+                    <div key={i} className={`p-feat ${has ? "has" : "no"}`}>
+                      <span className={has ? "p-check" : "p-cross"}>{has ? "✓" : "–"}</span>{label}
+                    </div>
+                  ))}
+                </div>
+                {!session
+                  ? <button className="p-btn ghost" onClick={() => setAuthModal("signup")}>Get started free →</button>
+                  : !isPro
+                    ? <div className="p-current">Current plan</div>
+                    : <button className="p-btn ghost" disabled>Free plan</button>}
+              </div>
+
+              {/* PRO */}
+              <div className="p-card featured">
+                <div className="p-card-badge">Most popular</div>
+                <div className="p-tier">Pro</div>
+                <div className="p-amount-row"><span className="p-currency">£</span><span className="p-amount">{displayPrice % 1 === 0 ? displayPrice : displayPrice.toFixed(2)}</span></div>
+                <div className="p-period">{annual ? "per month, billed annually" : "per month"}</div>
+                <div className="p-annual">{annual ? `£${(annualMonthly * 12).toFixed(0)}/year · save £${((monthlyPrice - annualMonthly) * 12).toFixed(0)}` : " "}</div>
+                <div className="p-desc">For anyone who regularly signs contracts, rents, or deals with legal documents.</div>
+                <div className="p-features">
+                  {[[true,"Unlimited analyses"],[true,"Plain English summaries"],[true,"Key clause explanations"],[true,"Red flags highlighted"],[true,"Action steps"],[true,"Negotiation tips per clause"],[true,"UK law compliance check"],[true,"PDF export of full report"]].map(([has, label], i) => (
+                    <div key={i} className="p-feat has"><span className="p-check">✓</span>{label}</div>
+                  ))}
+                </div>
+                {isPro
+                  ? <div className="p-current">Current plan ✓</div>
+                  : <button className="p-btn primary" onClick={handleUpgrade} disabled={checkoutLoading}>{checkoutLoading ? "Redirecting…" : `Get Pro${annual ? " — annual" : ""} →`}</button>}
+              </div>
+
+              {/* BUSINESS */}
+              <div className="p-card">
+                <div className="p-tier">Business</div>
+                <div className="p-amount-row"><span className="p-amount" style={{ fontSize: 32, fontFamily: "Playfair Display, serif", color: "var(--cream)" }}>Custom</span></div>
+                <div className="p-period">per month</div>
+                <div className="p-annual"> </div>
+                <div className="p-desc">For agencies, HR teams, letting agents, and platforms needing volume or white-label access.</div>
+                <div className="p-features">
+                  {["Everything in Pro","5+ team seats","API access","White-label option","Custom integrations","Priority support","Dedicated onboarding","Volume pricing"].map((label, i) => (
+                    <div key={i} className="p-feat has"><span className="p-check">✓</span>{label}</div>
+                  ))}
+                </div>
+                <button className="p-btn outline" onClick={() => window.location.href = "mailto:hello@clearclause.co.uk?subject=Business enquiry"}>Contact us →</button>
+              </div>
+            </div>
+
+            {/* Stats */}
+            <div className="social-strip">
+              {[["3","Free analyses/month"],["£150+","Solicitor rate/hour"],["30s","Average analysis time"],["100%","Private & secure"]].map(([n, l]) => (
+                <div key={l} className="s-stat"><div className="s-num">{n}</div><div className="s-label">{l}</div></div>
+              ))}
+            </div>
+
+            {/* FAQ */}
+            <div className="faq-wrap">
+              <div className="faq-heading">Common questions</div>
+              {FAQS.map((faq, i) => (
+                <div key={i} className="faq-row" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                  <div className="faq-q-row">
+                    <div className="faq-q-text">{faq.q}</div>
+                    <div className={`faq-arrow ${openFaq === i ? "open" : ""}`}>▾</div>
+                  </div>
+                  {openFaq === i && <div className="faq-a">{faq.a}</div>}
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom CTA */}
+            {!isPro && (
+              <div className="pricing-cta">
+                <div className="pricing-cta-title">Still unsure? <em>Try it free.</em></div>
+                <div className="pricing-cta-sub">3 free analyses. No credit card. Cancel Pro anytime.</div>
+                <button className="btn-amber" style={{ padding: "14px 32px", fontSize: 15 }}
+                  onClick={() => { if (!session) setAuthModal("signup"); else goHome(); }}>
+                  {session ? "Start analysing →" : "Create free account →"}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── HOME PAGE ─────────────────────────────────────── */}
+        {page === "home" && !result && !loading && (
           <>
             <section className="hero">
               <p className="hero-eyebrow">AI-Powered Document Analysis · Built for the UK</p>
@@ -406,11 +588,9 @@ export default function ClearClause() {
               <div className="usage-bar-wrap">
                 <div className="usage-bar">
                   <span className="usage-label">Monthly usage</span>
-                  <div className="usage-track">
-                    <div className={`usage-fill ${usageUsed >= usageLimit ? "full" : ""}`} style={{ width: `${usagePct}%` }} />
-                  </div>
+                  <div className="usage-track"><div className={`usage-fill ${usageUsed >= usageLimit ? "full" : ""}`} style={{ width: `${usagePct}%` }} /></div>
                   <span className="usage-count">{usageUsed} / {usageLimit}</span>
-                  <button className="usage-upgrade" onClick={handleUpgrade} disabled={checkoutLoading}>{checkoutLoading ? "Loading…" : "Upgrade →"}</button>
+                  <button className="usage-upgrade" onClick={() => setPage("pricing")}>Upgrade →</button>
                 </div>
               </div>
             )}
@@ -425,15 +605,15 @@ export default function ClearClause() {
                 {error === "free_limit" ? (
                   <div className="limit-gate">
                     <div className="limit-title">You've used your 3 free analyses</div>
-                    <div className="limit-sub">Upgrade to Pro for unlimited document analyses, negotiation tips, and UK law compliance checks.</div>
-                    <button className="btn-upgrade" onClick={handleUpgrade} disabled={checkoutLoading}>{checkoutLoading ? "Redirecting…" : "Upgrade to Pro — £9.99/month →"}</button>
+                    <div className="limit-sub">Upgrade to Pro for unlimited analyses, negotiation tips, and UK law compliance checks.</div>
+                    <button className="btn-upgrade" onClick={() => setPage("pricing")}>See pricing →</button>
                   </div>
                 ) : !session ? (
                   <>
                     {tab === "sample" && (
-                      <div style={{ background: "var(--navy)", border: "1px solid var(--border)", borderRadius: 6, padding: "20px 24px", marginBottom: 20 }}>
-                        <p style={{ fontFamily: "DM Mono, monospace", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: "var(--amber)", marginBottom: 12 }}>Sample: Employment Contract Extract</p>
-                        <pre style={{ fontFamily: "DM Mono, monospace", fontSize: 12, color: "var(--text-dim)", lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{SAMPLE_TEXT}</pre>
+                      <div style={{ background:"var(--navy)",border:"1px solid var(--border)",borderRadius:6,padding:"20px 24px",marginBottom:20 }}>
+                        <p style={{ fontFamily:"DM Mono,monospace",fontSize:11,letterSpacing:2,textTransform:"uppercase",color:"var(--amber)",marginBottom:12 }}>Sample: Employment Contract Extract</p>
+                        <pre style={{ fontFamily:"DM Mono,monospace",fontSize:12,color:"var(--text-dim)",lineHeight:1.7,whiteSpace:"pre-wrap" }}>{SAMPLE_TEXT}</pre>
                       </div>
                     )}
                     <div className="gate">
@@ -455,20 +635,14 @@ export default function ClearClause() {
                           <div className="dropzone-title">Drop your PDF here</div>
                           <div className="dropzone-sub">or <strong>click to browse</strong> · PDF up to 10MB</div>
                         </div>
-                        {file && (
-                          <div className="file-selected">
-                            <span>📎</span>
-                            <span className="file-name">{file.name}</span>
-                            <button className="file-remove" onClick={() => setFile(null)}>×</button>
-                          </div>
-                        )}
+                        {file && <div className="file-selected"><span>📎</span><span className="file-name">{file.name}</span><button className="file-remove" onClick={() => setFile(null)}>×</button></div>}
                       </>
                     )}
                     {tab === "paste" && <textarea placeholder="Paste your contract, terms, or any legal text here…" value={text} onChange={e => setText(e.target.value)} />}
                     {tab === "sample" && (
-                      <div style={{ background: "var(--navy)", border: "1px solid var(--border)", borderRadius: 6, padding: "20px 24px" }}>
-                        <p style={{ fontFamily: "DM Mono, monospace", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: "var(--amber)", marginBottom: 12 }}>Sample: Employment Contract Extract</p>
-                        <pre style={{ fontFamily: "DM Mono, monospace", fontSize: 12, color: "var(--text-dim)", lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{SAMPLE_TEXT}</pre>
+                      <div style={{ background:"var(--navy)",border:"1px solid var(--border)",borderRadius:6,padding:"20px 24px" }}>
+                        <p style={{ fontFamily:"DM Mono,monospace",fontSize:11,letterSpacing:2,textTransform:"uppercase",color:"var(--amber)",marginBottom:12 }}>Sample: Employment Contract Extract</p>
+                        <pre style={{ fontFamily:"DM Mono,monospace",fontSize:12,color:"var(--text-dim)",lineHeight:1.7,whiteSpace:"pre-wrap" }}>{SAMPLE_TEXT}</pre>
                       </div>
                     )}
                     {error && error !== "free_limit" && <div className="error-box">⚠️ {error}</div>}
@@ -483,7 +657,7 @@ export default function ClearClause() {
           </>
         )}
 
-        {loading && (
+        {page === "home" && loading && (
           <div className="upload-container">
             <div className="upload-panel">
               <div className="loading-state">
@@ -495,7 +669,7 @@ export default function ClearClause() {
           </div>
         )}
 
-        {result && !loading && (
+        {page === "home" && result && !loading && (
           <div className="upload-container">
             <div className="results">
               <div className="results-header">
@@ -507,10 +681,7 @@ export default function ClearClause() {
               </div>
               <div className={`risk-banner ${riskLevel}`}>
                 <div className="risk-dot" />
-                <div>
-                  <div className="risk-label">{result.risk_level} Risk</div>
-                  <div className="risk-desc">{result.risk_summary}</div>
-                </div>
+                <div><div className="risk-label">{result.risk_level} Risk</div><div className="risk-desc">{result.risk_summary}</div></div>
               </div>
               <div className="section">
                 <div className="section-head"><span>📋</span><span className="section-title">Plain English Summary</span></div>
@@ -522,10 +693,7 @@ export default function ClearClause() {
                   <div className="clause-list">
                     {result.clauses.map((c, i) => (
                       <div key={i} className={`clause-item ${c.severity}`}>
-                        <div className="clause-header">
-                          <span className="clause-tag">{c.severity}</span>
-                          <span className="clause-name">{c.name}</span>
-                        </div>
+                        <div className="clause-header"><span className="clause-tag">{c.severity}</span><span className="clause-name">{c.name}</span></div>
                         <div className="clause-plain">{c.plain_english}</div>
                       </div>
                     ))}
@@ -537,10 +705,7 @@ export default function ClearClause() {
                   <div className="section-head"><span>🚩</span><span className="section-title">Red Flags</span></div>
                   <div className="flags-list">
                     {result.red_flags.map((f, i) => (
-                      <div key={i} className="flag-item">
-                        <span className="flag-bullet">▲</span>
-                        <span className="flag-text">{f}</span>
-                      </div>
+                      <div key={i} className="flag-item"><span className="flag-bullet">▲</span><span className="flag-text">{f}</span></div>
                     ))}
                   </div>
                 </div>
@@ -551,10 +716,7 @@ export default function ClearClause() {
                   <div className="section-body">
                     <div className="action-list">
                       {result.actions.map((a, i) => (
-                        <div key={i} className="action-item">
-                          <span className="action-num">0{i + 1}</span>
-                          <span className="action-text">{a}</span>
-                        </div>
+                        <div key={i} className="action-item"><span className="action-num">0{i + 1}</span><span className="action-text">{a}</span></div>
                       ))}
                     </div>
                   </div>
@@ -573,8 +735,8 @@ export default function ClearClause() {
                     </div>
                   </div>
                   <div>
-                    <button className="btn-upgrade" onClick={handleUpgrade} disabled={checkoutLoading}>{checkoutLoading ? "Redirecting…" : "Upgrade to Pro →"}</button>
-                    <div className="price-tag">£9.99/month · cancel anytime</div>
+                    <button className="btn-upgrade" onClick={() => setPage("pricing")}>See pricing →</button>
+                    <div className="price-tag">from £9.99/month · cancel anytime</div>
                   </div>
                 </div>
               )}
@@ -585,7 +747,11 @@ export default function ClearClause() {
         <footer className="footer">
           <div className="footer-logo">Clear<span>Clause</span></div>
           <div className="footer-links">
-            {["Privacy","Terms","Pricing","Contact"].map(l => <span key={l} className="footer-link">{l}</span>)}
+            <span className="footer-link" onClick={goHome}>Home</span>
+            <span className="footer-link" onClick={() => setPage("pricing")}>Pricing</span>
+            <span className="footer-link">Privacy</span>
+            <span className="footer-link">Terms</span>
+            <span className="footer-link" onClick={() => window.location.href = "mailto:hello@clearclause.co.uk"}>Contact</span>
           </div>
         </footer>
       </div>
