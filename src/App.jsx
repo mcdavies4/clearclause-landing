@@ -2,9 +2,9 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 // ── CONFIG — replace with your values ────────────────────────────
-const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
-const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
-const API_BASE = "https://YOUR_RAILWAY_URL.railway.app";
+const SUPABASE_URL = "https://icsnkfxyiteqwtzntsfu.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imljc25rZnh5aXRlcXd0em50c2Z1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4MDEzMzYsImV4cCI6MjA5MjM3NzMzNn0.jcvt9_s4HTPPKo6E8-ucEnND6JYs3n9q20YNyhpk4es";
+const API_BASE = "clearclause-production-8ce5.up.railway.app";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
